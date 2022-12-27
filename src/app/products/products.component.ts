@@ -42,21 +42,26 @@ export class ProductsComponent implements OnInit {
       .pipe(
         debounceTime(800))
       .subscribe(() => {
+        if (this.search.length) {
+        
+          this.isLoading = true;
+          this.productsService.getDataSearch(functions.createUrl(this.search)).subscribe(( resp: any ) => {
+            this.products = resp.data;
 
-        this.isLoading = true;
-        this.productsService.getDataSearch(functions.createUrl(this.search)).subscribe(( resp: any ) => {
-          this.products = resp.data;
+            this.totalRows = resp.total;
 
-          this.totalRows = resp.total;
+            this.paginator.pageIndex = this.currentPage;
+            this.paginator.length = this.totalRows;
 
-          this.paginator.pageIndex = this.currentPage;
-          this.paginator.length = this.totalRows;
+            this.dataSource = new MatTableDataSource(this.products);
+            
+            this.isLoading = false;
 
-          this.dataSource = new MatTableDataSource(this.products);
-          
-          this.isLoading = false;
+          });
 
-        });
+        } else {
+          this.getData();
+        }
       })  
   }
 
@@ -91,12 +96,8 @@ export class ProductsComponent implements OnInit {
     this.getData();
   }
 
-  afterSearch() {
-    if (this.search.length) {
-      this.searchChanged.next();
-    } else {
-      this.getData();
-    }
+  afterSearch() {    
+    this.searchChanged.next();
   }
 
   deleteProduct(product_id: string) {
@@ -117,7 +118,6 @@ export class ProductsComponent implements OnInit {
                 this.getData();
               },
               (error) => {
-                console.log(error);
                 alerts.close();
                 alerts.basicAlert('Error', error.response, 'error');
               },
