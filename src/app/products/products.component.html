@@ -1,0 +1,87 @@
+<div class="container fluid bg-primary p-2">
+  <div class="card">
+    <div class="card-header">
+
+      <div class="d-lg-flex">
+        <h1 class="flex-grow-1">Lista de Productos</h1>
+
+        <div>
+          <button type="button" class="btn btn-info text-white" [routerLink]="['create']">Nuevo +</button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <input type="search" class="form-control" placeholder="Buscar..." [(ngModel)]="search"
+      (ngModelChange)="afterSearch()"
+      >
+      
+      <div class="mat-table-container mt-5">
+        <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+        <table
+          [hidden]="isLoading"
+          mat-table
+          [dataSource]="dataSource"
+          multiTemplateDataRows
+          class="mat-elevation-z8 matTable-table w-100"
+        >
+        
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Nombre </th>
+            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+          </ng-container>
+  
+          <!-- Category Column -->
+          <ng-container matColumnDef="category">
+            <th mat-header-cell *matHeaderCellDef class="text-center"> Categoría </th>
+            <td mat-cell *matCellDef="let element"> {{element.category.name}} </td>
+          </ng-container>
+          
+          <!-- Brand Column -->
+          <ng-container matColumnDef="brand">
+            <th mat-header-cell *matHeaderCellDef class="text-center"> Marca </th>
+            <td mat-cell *matCellDef="let element"> {{element.brand.name}} </td>
+          </ng-container>
+        
+          <!-- status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef class="text-center"> Estado </th>
+            <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+          </ng-container>
+  
+          <!-- ACTIONS -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Acciones</th>
+            <td mat-cell *matCellDef="let element" class="text-center">
+              <div class="btn-group">
+                <button
+                  class="btn btn-sm btn-warning mr-1"
+                  [routerLink]="['edit', element._id]"
+                >
+                  EDITAR
+                </button>
+                <button
+                  class="btn btn-sm btn-danger"
+                  (click)="deleteProduct(element._id)"
+                >
+                  ELIMINAR
+                </button>
+              </div>
+            </td>
+          </ng-container>
+        
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    </div>
+  
+    <div class="card-footer bg-white">
+      <mat-paginator #paginator [length]="totalRows" [pageIndex]="currentPage" [pageSize]="pageSize"
+            [pageSizeOptions]="pageSizeOptions" (page)="pageChanged($event)" aria-label="Select page">
+      </mat-paginator>
+    </div>
+
+  </div>
+</div>
